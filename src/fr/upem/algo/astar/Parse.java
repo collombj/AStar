@@ -1,14 +1,15 @@
-package fr.umlv.ir2.graphs;
+package fr.upem.algo.astar;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created by Valentin Griset on 04/05/2016.
  */
 public class Parse {
-
-
-    public static int[][] parseFile(File file) {
+    public static int[][] parseFile(File file) throws IOException {
 
         int x;
         int y;
@@ -33,9 +34,6 @@ public class Parse {
                 }
             }
             return tab;
-        } catch (IOException e ) {
-            e.printStackTrace();
-            return null;
         }
     }
 }
