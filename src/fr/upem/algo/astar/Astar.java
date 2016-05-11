@@ -20,8 +20,10 @@ public class Astar {
 
         // Distance réel
         int[] g = createIntegerArray(verticesQuantity, Integer.MAX_VALUE);
+        g[start.getPosition(maxX)] = 0;
         // Distance simulée avec l'heuristique
         int[] f = createIntegerArray(verticesQuantity, Integer.MAX_VALUE);
+        f[start.getPosition(maxX)] = 0;
         // Prédécesseur
         Vertex[] pi = new Vertex[verticesQuantity];
 
@@ -51,8 +53,8 @@ public class Astar {
 
                 if (computed.contains(edge.destination)) {
                     if (g[positionY] > g[positionX] + edge.weigh) { // Meilleur chemin
-                        g[positionY] = g[positionX] + edge.weigh;
-                        f[positionY] = g[positionY] + heuristic(y, target, maxX, maxY);
+                        g[positionY] = sum(g[positionX], edge.weigh);
+                        f[positionY] = sum(g[positionY], heuristic(y, target, maxX, maxY));
                         pi[positionY] = x;
 
                         if (!border.contains(y)) {
@@ -60,8 +62,8 @@ public class Astar {
                         }
                     }
                 } else {
-                    g[positionY] = g[positionX] + edge.weigh;
-                    f[positionY] = g[positionY] + heuristic(y, target, maxX, maxY);
+                    g[positionY] = sum(g[positionX], edge.weigh);
+                    f[positionY] = sum(g[positionY], heuristic(y, target, maxX, maxY));
                     pi[positionY] = x;
 
                     border.add(y);
@@ -143,6 +145,18 @@ public class Astar {
         }
 
         return result;
+    }
+
+    @Contract(pure = true)
+    private static int sum(int... numbers) {
+        int sum = 0;
+        for (int number : numbers) {
+            if (number == Integer.MAX_VALUE) {
+                return Integer.MAX_VALUE;
+            }
+            sum += number;
+        }
+        return sum;
     }
 
     public static class ShortestPath {

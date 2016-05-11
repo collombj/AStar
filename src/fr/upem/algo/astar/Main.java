@@ -61,7 +61,8 @@ public class Main {
         }
 
         System.out.println("Chemin de lg. " + res.weigh + " allant de " + res.source + " à " + res.target);
-        res.path.forEach(edge -> System.out.print(edge + " -> "));
+        res.path.forEach(edge -> System.out.print(edge.source + " -> "));
+        System.out.print(res.target);
         System.out.println();
     }
 
