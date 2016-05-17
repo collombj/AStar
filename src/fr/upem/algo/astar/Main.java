@@ -86,7 +86,7 @@ public class Main {
         int maxX = tab.length;
         int maxY = tab[0].length;
 
-        Graph g = new MatGraph(maxX + 1, maxY + 1);
+        Graph g = new AdjGraph(maxX + 1, maxY + 1);
 
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {

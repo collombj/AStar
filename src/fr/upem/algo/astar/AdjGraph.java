@@ -55,7 +55,7 @@ public class AdjGraph implements Graph {
     public Iterator<Edge> neighborIterator(@NotNull Vertex origin) {
         List<Edge> edges = graph.get(origin);
 
-        return edges == null ? null : edges.iterator();
+        return edges == null ? Collections.emptyIterator() : edges.iterator();
     }
 
     @Override
