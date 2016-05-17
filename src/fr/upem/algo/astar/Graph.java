@@ -1,5 +1,7 @@
 package fr.upem.algo.astar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -8,17 +10,17 @@ public interface Graph {
 
     int numberOfVertices();
 
-    void addEdge(Vertex source, Vertex destination, int weigh);
+    void addEdge(@NotNull Vertex source, @NotNull Vertex destination, int weigh);
 
-    boolean isEdge(Vertex source, Vertex destination);
+    boolean isEdge(@NotNull Vertex source, @NotNull Vertex destination);
 
-    Iterator<Edge> neighborIterator(Vertex origin);
+    Iterator<Edge> neighborIterator(@NotNull Vertex origin);
 
     int getMaxX();
 
     int getMaxY();
 
-    default void forEachEdge(Vertex origin, Consumer<Edge> consumer) {
+    default void forEachEdge(@NotNull Vertex origin, @NotNull Consumer<Edge> consumer) {
         Iterator<Edge> it = this.neighborIterator(origin);
         while (it.hasNext()) {
             consumer.accept(it.next());
@@ -27,6 +29,7 @@ public interface Graph {
 
     default String toGraphviz() {
         StringBuilder result = new StringBuilder();
+
         result.append("digraph G {\n");
         forEachVertices(vertex -> {
             forEachEdge(vertex, edge -> {
@@ -35,9 +38,10 @@ public interface Graph {
                         .append(" [ label=\"").append(edge.weigh).append("\" ] ; \n");
             });
         });
+        result.append("}");
 
         return result.toString();
     }
 
-    void forEachVertices(Consumer<Vertex> consumer);
+    void forEachVertices(@NotNull Consumer<Vertex> consumer);
 }

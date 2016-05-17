@@ -1,6 +1,9 @@
 
 package fr.upem.algo.astar;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -21,15 +24,14 @@ public class MatGraph implements Graph {
         graph = new int[numberOfVertices][numberOfVertices];
     }
 
-    private int position(Vertex vertex) {
-        int x = vertex.x;
-        int y = vertex.y * maxX;
-
-        return x + y;
+    @Contract(pure = true)
+    private int position(@NotNull Vertex vertex) {
+        return vertex.x * maxY + vertex.y;
     }
 
+    @Contract("_ -> !null")
     private Vertex position(int position) {
-        return new Vertex(position % maxX, position / maxX);
+        return new Vertex(position / maxY, position % maxY);
     }
 
     @Override
@@ -43,7 +45,7 @@ public class MatGraph implements Graph {
     }
 
     @Override
-    public void addEdge(Vertex source, Vertex destination, int weigh) {
+    public void addEdge(@NotNull Vertex source, @NotNull Vertex destination, int weigh) {
         int src = position(source);
         int dst = position(destination);
 
@@ -52,7 +54,7 @@ public class MatGraph implements Graph {
     }
 
     @Override
-    public boolean isEdge(Vertex source, Vertex destination) {
+    public boolean isEdge(@NotNull Vertex source, @NotNull Vertex destination) {
         int src = position(source);
         int dst = position(destination);
 
@@ -60,23 +62,19 @@ public class MatGraph implements Graph {
     }
 
     @Override
-    public Iterator<Edge> neighborIterator(Vertex origin) {
-        int start = position(origin);
-        int limit = start + maxX;
+    public Iterator<Edge> neighborIterator(@NotNull Vertex origin) {
 
         return new Iterator<Edge>() {
-            int current = start - 1;
-
-            @Override
-            public String toString() {
-                return super.toString();
-            }
+            int vertex = origin.getPosition(maxY);
+            int current = 0;
+            int limit = graph.length - maxY;
 
             @Override
             public boolean hasNext() {
-                if (current < start) {
-                    findNext();
+                while (graph[vertex][current] <= 0 && current < limit) {
+                    current++;
                 }
+
                 return current < limit;
             }
 
@@ -86,24 +84,15 @@ public class MatGraph implements Graph {
                     throw new IllegalStateException("No next value");
                 }
 
-                Edge edge = new Edge(origin, position(current), graph[start][current]);
-                findNext();
+                Edge edge = new Edge(origin, position(current), graph[vertex][current]);
+                current++;
                 return edge;
-            }
-
-            private boolean findNext() {
-                for (current += 1; current < limit; current++) {
-                    if (graph[start][current] != 0) {
-                        return true;
-                    }
-                }
-                return false;
             }
         };
     }
 
     @Override
-    public void forEachVertices(Consumer<Vertex> consumer) {
+    public void forEachVertices(@NotNull Consumer<Vertex> consumer) {
         for (int i = 0; i < numberOfVertices; i++) {
             consumer.accept(position(i));
         }
@@ -117,5 +106,15 @@ public class MatGraph implements Graph {
     @Override
     public int getMaxY() {
         return maxY;
+    }
+
+    public void test() {
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
+                if (graph[x][y] > 0) {
+                    System.out.println(new Vertex(x, y) + " : " + graph[x][y]);
+                }
+            }
+        }
     }
 }

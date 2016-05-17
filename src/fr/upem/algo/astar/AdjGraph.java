@@ -1,5 +1,7 @@
 package fr.upem.algo.astar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -29,7 +31,7 @@ public class AdjGraph implements Graph {
     }
 
     @Override
-    public void addEdge(Vertex source, Vertex destination, int weigh) {
+    public void addEdge(@NotNull Vertex source, @NotNull Vertex destination, int weigh) {
         List<Edge> edges = graph.get(source);
         if (edges == null) {
             edges = new LinkedList<>();
@@ -40,7 +42,7 @@ public class AdjGraph implements Graph {
     }
 
     @Override
-    public boolean isEdge(Vertex source, Vertex destination) {
+    public boolean isEdge(@NotNull Vertex source, @NotNull Vertex destination) {
         for (Edge edge : graph.get(source)) {
             if (edge.destination == destination) {
                 return true;
@@ -50,14 +52,14 @@ public class AdjGraph implements Graph {
     }
 
     @Override
-    public Iterator<Edge> neighborIterator(Vertex origin) {
+    public Iterator<Edge> neighborIterator(@NotNull Vertex origin) {
         List<Edge> edges = graph.get(origin);
 
         return edges == null ? null : edges.iterator();
     }
 
     @Override
-    public void forEachVertices(Consumer<Vertex> consumer) {
+    public void forEachVertices(@NotNull Consumer<Vertex> consumer) {
         graph.keySet().forEach(consumer);
     }
 

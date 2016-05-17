@@ -14,7 +14,6 @@ public class Parse {
         int x;
         int y;
         String line;
-        String split = " ";
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             line = br.readLine();
             x = Integer.valueOf(line);

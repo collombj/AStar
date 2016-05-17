@@ -14,11 +14,8 @@ public class Vertex {
         y = vertex.y;
     }
 
-    public int getPosition(int maxX) {
-        int x = this.x;
-        int y = this.y * maxX;
-
-        return x + y;
+    public int getPosition(int maxY) {
+        return x * maxY + y;
     }
 
     @Override

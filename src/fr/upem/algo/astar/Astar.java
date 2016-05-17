@@ -8,22 +8,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Jeremie on 04/05/2016.
- */
+
 public class Astar {
     @Nullable
     public static ShortestPath astar(Graph graph, Vertex start, Vertex target) {
         int verticesQuantity = graph.numberOfVertices();
-        int maxX = graph.getMaxX();
         int maxY = graph.getMaxY();
 
         // Distance réel
         int[] g = createIntegerArray(verticesQuantity, Integer.MAX_VALUE);
-        g[start.getPosition(maxX)] = 0;
+        g[start.getPosition(maxY)] = 0;
         // Distance simulée avec l'heuristique
         int[] f = createIntegerArray(verticesQuantity, Integer.MAX_VALUE);
-        f[start.getPosition(maxX)] = 0;
+        f[start.getPosition(maxY)] = heuristic(start, target);
         // Prédécesseur
         Vertex[] pi = new Vertex[verticesQuantity];
 
@@ -35,26 +32,28 @@ public class Astar {
         List<Vertex> computed = new ArrayList<>(verticesQuantity);
 
         int weighTotal = -1;
-
+        int step = 0;
         while (!border.isEmpty()) {
+            step++;
             Vertex x = findLowerVertexWeight(graph, f, border);
 
             if (x.equals(target)) {
-                weighTotal = f[x.getPosition(maxX)];
+                weighTotal = f[x.getPosition(maxY)];
                 break;
             }
+
             border.remove(x);
 
             graph.forEachEdge(x, edge -> {
                 Vertex y = edge.destination;
 
-                int positionX = x.getPosition(maxX);
-                int positionY = y.getPosition(maxX);
+                int positionX = x.getPosition(maxY);
+                int positionY = y.getPosition(maxY);
 
                 if (computed.contains(edge.destination)) {
                     if (g[positionY] > g[positionX] + edge.weigh) { // Meilleur chemin
                         g[positionY] = sum(g[positionX], edge.weigh);
-                        f[positionY] = sum(g[positionY], heuristic(y, target, maxX, maxY));
+                        f[positionY] = sum(g[positionY], heuristic(y, target));
                         pi[positionY] = x;
 
                         if (!border.contains(y)) {
@@ -63,7 +62,7 @@ public class Astar {
                     }
                 } else {
                     g[positionY] = sum(g[positionX], edge.weigh);
-                    f[positionY] = sum(g[positionY], heuristic(y, target, maxX, maxY));
+                    f[positionY] = sum(g[positionY], heuristic(y, target));
                     pi[positionY] = x;
 
                     border.add(y);
@@ -76,7 +75,7 @@ public class Astar {
             return null;
         }
 
-        return new ShortestPath(start, target, toPath(graph, start, target, pi, g), weighTotal);
+        return new ShortestPath(start, target, toPath(graph, start, target, pi, g), weighTotal, step);
     }
 
     private static List<Edge> toPath(Graph graph, Vertex start, Vertex target, Vertex[] pi, int[] g) {
@@ -84,10 +83,10 @@ public class Astar {
 
         Vertex current = target;
         while (!current.equals(start)) {
-            int currentPosition = current.getPosition(graph.getMaxX());
+            int currentPosition = current.getPosition(graph.getMaxY());
 
             Vertex previous = pi[currentPosition];
-            int weigh = g[currentPosition] - g[previous.getPosition(graph.getMaxX())];
+            int weigh = g[currentPosition] - g[previous.getPosition(graph.getMaxY())];
 
             path.addFirst(new Edge(previous, current, weigh));
 
@@ -100,16 +99,18 @@ public class Astar {
     /**
      * TODO : improve perf
      */
-    private static Vertex findLowerVertexWeight(Graph graph, int[] f, List<Vertex> border) {
-        Vertex result = border.get(0);
-        int cost = f[result.getPosition(graph.getMaxX())];
+    private static Vertex findLowerVertexWeight(Graph graph, int[] f, List<Vertex> borders) {
+        Vertex result = borders.get(0);
+        int cost = f[result.getPosition(graph.getMaxY())];
 
-        for (Vertex vertex : border) {
-            if (cost > f[vertex.getPosition(graph.getMaxX())]) {
-                cost = f[vertex.getPosition(graph.getMaxX())];
+        for (Vertex vertex : borders) {
+            System.out.println(vertex + " = " + f[vertex.getPosition(graph.getMaxY())]);
+            if (cost > f[vertex.getPosition(graph.getMaxY())]) {
+                cost = f[vertex.getPosition(graph.getMaxY())];
                 result = vertex;
             }
         }
+        System.out.println(result);
         return result;
     }
 
@@ -123,28 +124,11 @@ public class Astar {
     }
 
     @Contract(pure = true)
-    private static int heuristic(Vertex source, Vertex destination, int limitX, int limitY) {
-        int result = 0;
-        int x = source.x;
-        int y = source.y;
+    private static int heuristic(Vertex source, Vertex destination) {
+        int diffX = source.x > destination.x ? source.x - destination.x : destination.x - source.x;
+        int diffY = source.y > destination.y ? source.y - destination.y : destination.y - source.y;
 
-        while (destination.x != x && destination.y != y) {
-            if (x > destination.x && x > 0) {
-                x--;
-            } else if (x < destination.x && x < limitX) {
-                x++;
-            }
-
-            if (y > destination.y && y > 0) {
-                y--;
-            } else if (y < destination.y && y < limitY) {
-                y++;
-            }
-
-            result++;
-        }
-
-        return result;
+        return diffX + diffY;
     }
 
     @Contract(pure = true)
@@ -166,11 +150,14 @@ public class Astar {
         public final List<Edge> path;
         public final int weigh;
 
-        private ShortestPath(Vertex source, Vertex target, List<Edge> path, int weigh) {
+        public final int step;
+
+        private ShortestPath(Vertex source, Vertex target, List<Edge> path, int weigh, int step) {
             this.source = source;
             this.target = target;
             this.path = Collections.unmodifiableList(path);
             this.weigh = weigh;
+            this.step = step;
         }
     }
 }

@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-/**
- * Created by Valentin Griset on 04/05/2016.
- */
+
 public class Main {
     public static void main(String[] args) {
         int x1 = 0;
@@ -44,22 +42,27 @@ public class Main {
 
 
         if (x2 == -1 || x2 >= tab.length) {
-            x2 = tab[0].length;
+            x2 = tab.length;
         }
         if (y2 == -1 || y2 >= tab[0].length) {
             y2 = tab[0].length;
         }
 
+        Vertex origin = new Vertex(x1, y1);
+        Vertex target = new Vertex(x2, y2);
+
         displayGame(tab);
 
         Graph game = toGraph(tab);
 
-        Astar.ShortestPath res = Astar.astar(game, new Vertex(x1, y1), new Vertex(x2, y2));
+        Astar.ShortestPath res = Astar.astar(game, origin, target);
+
         if (res == null) {
-            System.err.println("No path found");
+            System.err.println("Pas de chemin trouvé pour aller de " + origin + " à " + target);
             return;
         }
 
+        System.out.println("Astar: " + res.step + " étapes");
         System.out.println("Chemin de lg. " + res.weigh + " allant de " + res.source + " à " + res.target);
         res.path.forEach(edge -> System.out.print(edge.source + " -> "));
         System.out.print(res.target);
@@ -68,7 +71,7 @@ public class Main {
 
     private static void displayGame(int[][] tab) {
         for (int i = 0; i < tab.length; i++) {
-            for (int j = 0; j <tab[i].length ; j++) {
+            for (int j = 0; j < tab[i].length; j++) {
                 if (tab[i][j] == -1) {
                     System.out.print("# ");
                 } else {
@@ -80,52 +83,54 @@ public class Main {
     }
 
     private static Graph toGraph(int[][] tab) {
-        int maxX = tab.length - 1;
-        int maxY = tab[0].length - 1;
+        int maxX = tab.length;
+        int maxY = tab[0].length;
+
         Graph g = new MatGraph(maxX + 1, maxY + 1);
 
-        for (int i = 0; i < tab.length; i++) {
-            for (int j = 0; j < tab[i].length; j++) {
-                if (tab[i][j] == -1) {
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
+                Vertex org = new Vertex(x, y);
+                if (tab[x][y] <= 0) {
                     continue;
                 }
 
-                Vertex current = new Vertex(i, j);
-
-                // Nord
-                if (i > 0 && tab[i - 1][j] != -1) {
-                    g.addEdge(current, new Vertex(i - 1, j), tab[i - 1][j]);
-                }
-                // Ouest
-                if (j > 0 && tab[i][j - 1] != -1) {
-                    g.addEdge(current, new Vertex(i, j - 1), tab[i][j - 1]);
+                // Est
+                if (y + 1 < maxY) {
+                    g.addEdge(org, new Vertex(x, y + 1), tab[x][y + 1]);
                 }
 
                 // Sud
-                if (i < maxX && tab[i + 1][j] != -1) {
-                    g.addEdge(current, new Vertex(i + 1, j), tab[i + 1][j]);
-                }
-                // Est
-                if (j > maxY && tab[i][j + 1] != -1) {
-                    g.addEdge(current, new Vertex(i, j + 1), tab[i][j + 1]);
+                if (x + 1 < maxX) {
+                    g.addEdge(org, new Vertex(x + 1, y), tab[x + 1][y]);
                 }
 
-                // Nord-Ouest
-                if (i > 0 && j > 0 && tab[i - 1][j - 1] != -1) {
-                    g.addEdge(current, new Vertex(i - 1, j - 1), tab[i - 1][j - 1]);
-                }
-                // Nord-Est
-                if (i > 0 && j < maxY && tab[i - 1][j + 1] != -1) {
-                    g.addEdge(current, new Vertex(i - 1, j + 1), tab[i - 1][j + 1]);
+                // Ouest
+                if (y - 1 >= 0) {
+                    g.addEdge(org, new Vertex(x, y - 1), tab[x][y - 1]);
                 }
 
-                // Sud-Ouest
-                if (i > maxX && j > 0 && tab[i + 1][j - 1] != -1) {
-                    g.addEdge(current, new Vertex(i + 1, j - 1), tab[i + 1][j - 1]);
+                // Nord
+                if (x - 1 >= 0) {
+                    g.addEdge(org, new Vertex(x - 1, y), tab[x - 1][y]);
                 }
-                // Sud-Est
-                if (i > maxX && j < maxY && tab[i + 1][j + 1] != -1) {
-                    g.addEdge(current, new Vertex(i + 1, j + 1), tab[i + 1][j + 1]);
+
+                // Sud - Est
+                if (x + 1 < maxX && y + 1 < maxY) {
+                    g.addEdge(org, new Vertex(x + 1, y + 1), tab[x + 1][y + 1]);
+                }
+                // Sud - Ouest
+                if (x + 1 < maxX && y - 1 >= 0) {
+                    g.addEdge(org, new Vertex(x + 1, y - 1), tab[x + 1][y - 1]);
+                }
+
+                // Nord - Est
+                if (x - 1 >= 0 && y + 1 < maxY) {
+                    g.addEdge(org, new Vertex(x - 1, y + 1), tab[x - 1][y + 1]);
+                }
+                // Nord - Ouest
+                if (x - 1 >= 0 && y - 1 >= 0) {
+                    g.addEdge(org, new Vertex(x - 1, y - 1), tab[x - 1][y - 1]);
                 }
             }
         }
