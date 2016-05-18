@@ -15,7 +15,7 @@ public class Astar {
         int verticesQuantity = graph.numberOfVertices();
         int maxY = graph.getMaxY();
 
-        // Distance réel
+        // Distance réel : tous les poids les plus légé entre source et tous les autres points
         int[] g = createIntegerArray(verticesQuantity, Integer.MAX_VALUE);
         g[start.getPosition(maxY)] = 0;
         // Distance simulée avec l'heuristique
@@ -25,33 +25,33 @@ public class Astar {
         Vertex[] pi = new Vertex[verticesQuantity];
 
         // Sommets voisin
-        List<Vertex> border = new ArrayList<>(8);
+        List<Vertex> border = new ArrayList<>();
         border.add(start);
 
         // Sommets visités
-        List<Vertex> computed = new ArrayList<>(verticesQuantity);
+        List<Vertex> visited = new ArrayList<>(verticesQuantity);
 
         int weighTotal = -1;
         int step = 0;
         while (!border.isEmpty()) {
             step++;
-            Vertex x = findLowerVertexWeight(graph, f, border);
+            Vertex x = findLowerVertexWeight(graph, f, border); //Sommet courant
 
-            if (x.equals(target)) {
-                weighTotal = f[x.getPosition(maxY)];
+            if (x.equals(target)) { //On s'arrete quand on arrive à la destination
+                weighTotal = g[x.getPosition(maxY)];
                 break;
             }
 
-            border.remove(x);
+            border.remove(x); //On retire de nos voisins le sommet courant
 
-            graph.forEachEdge(x, edge -> {
-                Vertex y = edge.destination;
+            graph.forEachEdge(x, edge -> { // pour chaque voisins de notre sommet courant
+                Vertex y = edge.destination; // récupère le voisin accessible
 
-                int positionX = x.getPosition(maxY);
-                int positionY = y.getPosition(maxY);
+                int positionX = x.getPosition(maxY);//position du sommet courant
+                int positionY = y.getPosition(maxY);//position du sommet voisin accessible
 
-                if (computed.contains(edge.destination)) {
-                    if (g[positionY] > g[positionX] + edge.weigh) { // Meilleur chemin
+                if (visited.contains(y)) { //si mon tabeau de sommet visité contient notre voisin
+                    if (g[positionY] > g[positionX] + edge.weigh) { //Si mon poids pour aller à mon voisin est plus légé que mon poids actuel avec le poids de mon voisin
                         g[positionY] = sum(g[positionX], edge.weigh);
                         f[positionY] = sum(g[positionY], heuristic(y, target));
                         pi[positionY] = x;
@@ -66,7 +66,7 @@ public class Astar {
                     pi[positionY] = x;
 
                     border.add(y);
-                    computed.add(y);
+                    visited.add(y);
                 }
             });
         }
@@ -96,21 +96,16 @@ public class Astar {
         return path;
     }
 
-    /**
-     * TODO : improve perf
-     */
     private static Vertex findLowerVertexWeight(Graph graph, int[] f, List<Vertex> borders) {
         Vertex result = borders.get(0);
         int cost = f[result.getPosition(graph.getMaxY())];
 
         for (Vertex vertex : borders) {
-            System.out.println(vertex + " = " + f[vertex.getPosition(graph.getMaxY())]);
             if (cost > f[vertex.getPosition(graph.getMaxY())]) {
                 cost = f[vertex.getPosition(graph.getMaxY())];
                 result = vertex;
             }
         }
-        System.out.println(result);
         return result;
     }
 

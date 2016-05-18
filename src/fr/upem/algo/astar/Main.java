@@ -86,7 +86,7 @@ public class Main {
         int maxX = tab.length;
         int maxY = tab[0].length;
 
-        Graph g = new AdjGraph(maxX + 1, maxY + 1);
+        Graph g = new MatGraph(maxX + 1, maxY + 1);
 
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {
@@ -96,40 +96,40 @@ public class Main {
                 }
 
                 // Est
-                if (y + 1 < maxY) {
+                if (y + 1 < maxY && tab[x][y + 1] > 0) {
                     g.addEdge(org, new Vertex(x, y + 1), tab[x][y + 1]);
                 }
 
                 // Sud
-                if (x + 1 < maxX) {
+                if (x + 1 < maxX && tab[x + 1][y] > 0) {
                     g.addEdge(org, new Vertex(x + 1, y), tab[x + 1][y]);
                 }
 
                 // Ouest
-                if (y - 1 >= 0) {
+                if (y - 1 >= 0 && tab[x][y - 1] > 0) {
                     g.addEdge(org, new Vertex(x, y - 1), tab[x][y - 1]);
                 }
 
                 // Nord
-                if (x - 1 >= 0) {
+                if (x - 1 >= 0 && tab[x - 1][y] > 0) {
                     g.addEdge(org, new Vertex(x - 1, y), tab[x - 1][y]);
                 }
 
                 // Sud - Est
-                if (x + 1 < maxX && y + 1 < maxY) {
+                if (x + 1 < maxX && y + 1 < maxY && tab[x + 1][y + 1] > 0) {
                     g.addEdge(org, new Vertex(x + 1, y + 1), tab[x + 1][y + 1]);
                 }
                 // Sud - Ouest
-                if (x + 1 < maxX && y - 1 >= 0) {
+                if (x + 1 < maxX && y - 1 >= 0 && tab[x + 1][y - 1] > 0) {
                     g.addEdge(org, new Vertex(x + 1, y - 1), tab[x + 1][y - 1]);
                 }
 
                 // Nord - Est
-                if (x - 1 >= 0 && y + 1 < maxY) {
+                if (x - 1 >= 0 && y + 1 < maxY && tab[x - 1][y + 1] > 0) {
                     g.addEdge(org, new Vertex(x - 1, y + 1), tab[x - 1][y + 1]);
                 }
                 // Nord - Ouest
-                if (x - 1 >= 0 && y - 1 >= 0) {
+                if (x - 1 >= 0 && y - 1 >= 0 && tab[x - 1][y - 1] > 0) {
                     g.addEdge(org, new Vertex(x - 1, y - 1), tab[x - 1][y - 1]);
                 }
             }

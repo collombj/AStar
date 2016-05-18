@@ -107,14 +107,4 @@ public class MatGraph implements Graph {
     public int getMaxY() {
         return maxY;
     }
-
-    public void test() {
-        for (int x = 0; x < maxX; x++) {
-            for (int y = 0; y < maxY; y++) {
-                if (graph[x][y] > 0) {
-                    System.out.println(new Vertex(x, y) + " : " + graph[x][y]);
-                }
-            }
-        }
-    }
 }
