@@ -4,8 +4,8 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+/.idea
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -69,10 +69,8 @@ local.properties
 
 # User-specific stuff:
 *.iml
-.idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
-.idea/vcs.xml
 .idea/jsLibraryMappings.xml
 
 # Sensitive or high-churn files:
@@ -81,12 +79,8 @@ local.properties
 .idea/dataSources.local.xml
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
-.idea/uiDesigner.xml
-
 # Gradle:
 .idea/gradle.xml
-.idea/libraries
-
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 

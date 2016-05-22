@@ -41,11 +41,17 @@ public class Main {
         }
 
 
-        if (x2 == -1 || x2 >= tab.length) {
-            x2 = tab.length;
+        if (x1 < 0 || x1 >= tab.length) {
+            x1 = 0;
         }
-        if (y2 == -1 || y2 >= tab[0].length) {
-            y2 = tab[0].length;
+        if (y1 < 0 || y1 >= tab[0].length) {
+            y1 = 0;
+        }
+        if (x2 < 0 || x2 >= tab.length) {
+            x2 = tab.length - 1;
+        }
+        if (y2 < 0 || y2 >= tab[0].length) {
+            y2 = tab[0].length - 1;
         }
 
         Vertex origin = new Vertex(x1, y1);
@@ -86,7 +92,7 @@ public class Main {
         int maxX = tab.length;
         int maxY = tab[0].length;
 
-        Graph g = new MatGraph(maxX + 1, maxY + 1);
+        Graph g = new AdjGraph(maxX + 1, maxY + 1);
 
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {

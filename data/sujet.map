@@ -1,0 +1,14 @@
+4
+6
+ 3 3 1 3 2 3 
+ 1 1 3 # 3 2 
+ 3 # # # # 2 
+ 1 1 2 1 1 1 
+
+debut =  (0, 0) , fin =  (3, 0) *** Dijkstra = 8 - 8 etapes *** Astar = 8 - 5 etapes *** 
+
+debut =  (0, 0) , fin =  (0, 5) *** Dijkstra = 13 - 16 etapes *** Astar = 13 - 11 etapes *** 
+
+debut =  (0, 0) , fin =  (3, 5) *** Dijkstra = 13 - 18 etapes *** Astar = 13 - 15 etapes *** 
+
+debut =  (3, 5) , fin =  (0, 0) *** Dijkstra = 13 - 18 etapes *** Astar = 13 - 16 etapes *** 
